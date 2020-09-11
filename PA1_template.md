@@ -146,7 +146,7 @@ dfimp %>% group_by(date) %>% summarize(sum = sum(steps)) -> summedimp
 hist(summedimp$sum, breaks=61, xlab="Total number of steps per day [-]", main="Histogram of imputed data")
 ```
 
-![](PA1_template_files/figure-html/hist imputed-1.png)<!-- -->
+![](PA1_template_files/figure-html/histimputed-1.png)<!-- -->
 
 Calculate the mean and median:
 
@@ -195,4 +195,4 @@ library(ggplot2)
 ggplot(averageimp, aes(interval, mean)) + geom_line() + facet_grid(type ~ .) + ylab("Number steps") + xlab("Interval")
 ```
 
-![](PA1_template_files/figure-html/panel plot-1.png)<!-- -->
+![](PA1_template_files/figure-html/panelplot-1.png)<!-- -->

@@ -69,7 +69,7 @@ for(i in  1:nrow(dfimp))
 
 Make a histogram of the total number of steps taken each day and calculate the mean and median total number of steps taken per day.
 
-```{r hist imputed, echo=TRUE}
+```{r histimputed, echo=TRUE}
 dfimp %>% group_by(date) %>% summarize(sum = sum(steps)) -> summedimp
 hist(summedimp$sum, breaks=61, xlab="Total number of steps per day [-]", main="Histogram of imputed data")
 ```
@@ -97,7 +97,7 @@ dfimp %>% na.omit() %>% group_by(interval, type) %>% summarize(mean = mean(steps
 
 Create a panel plot:
 
-```{r panel plot, echo=TRUE}
+```{r panelplot, echo=TRUE}
 library(ggplot2)
 ggplot(averageimp, aes(interval, mean)) + geom_line() + facet_grid(type ~ .) + ylab("Number steps") + xlab("Interval")
 ```
