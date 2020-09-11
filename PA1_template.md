@@ -10,7 +10,8 @@ output:
 
 Unzip and read, recognize date as such:
 
-```{r load, echo=TRUE}
+
+```r
 df <- read.table(unz("activity.zip", "activity.csv"), header=T, sep=",")
 df$date <- as.Date(df$date)
 ```
@@ -19,33 +20,90 @@ df$date <- as.Date(df$date)
 
 Plot the histogram:
 
-```{r histogram, echo=TRUE}
+
+```r
 library(dplyr)
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 df %>% na.omit() %>% group_by(date) %>% summarize(sum = sum(steps)) -> summed
+```
+
+```
+## `summarise()` ungrouping output (override with `.groups` argument)
+```
+
+```r
 hist(summed$sum, breaks=53, xlab="Number of steps per day [-]", main="Histogram of total number of steps per day")
 ```
 
+![](PA1_template_files/figure-html/histogram-1.png)<!-- -->
+
 Calculate the mean and median:
 
-```{r mean median, echo=TRUE}
+
+```r
 mean(summed$sum, na.rm = TRUE)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(summed$sum, na.rm = TRUE)
+```
+
+```
+## [1] 10765
 ```
 
 ## What is the average daily activity pattern?
 
 Calculate the average and make a time series plot:
 
-```{r average, echo=TRUE}
+
+```r
 df %>% na.omit() %>% group_by(interval) %>% summarize(mean = mean(steps)) -> average
+```
+
+```
+## `summarise()` ungrouping output (override with `.groups` argument)
+```
+
+```r
 plot(average$interval, average$mean, type="l", xlab="Interval", ylab="Mean")
 ```
 
+![](PA1_template_files/figure-html/average-1.png)<!-- -->
+
 Interval with maximum number of steps:
 
-```{r max Interval, echo=TRUE}
+
+```r
 maxind <- which.max(average$mean)
 average$interval[maxind]
+```
+
+```
+## [1] 835
 ```
 Thus, in the interval starting at minute 835 the most steps are taken on average.
 
@@ -53,13 +111,19 @@ Thus, in the interval starting at minute 835 the most steps are taken on average
 
 Determine the number of NA values:
 
-```{r count NA, echo=TRUE}
+
+```r
 sum(is.na(df$steps))
+```
+
+```
+## [1] 2304
 ```
 
 Impute missing values by mean value of that 5-min interval across all days:
 
-```{r impute, echo=TRUE}
+
+```r
 na <- is.na(df$steps)
 dfimp <- df
 for(i in  1:nrow(dfimp)) 
@@ -69,16 +133,38 @@ for(i in  1:nrow(dfimp))
 
 Make a histogram of the total number of steps taken each day and calculate the mean and median total number of steps taken per day.
 
-```{r hist imputed, echo=TRUE}
+
+```r
 dfimp %>% group_by(date) %>% summarize(sum = sum(steps)) -> summedimp
+```
+
+```
+## `summarise()` ungrouping output (override with `.groups` argument)
+```
+
+```r
 hist(summedimp$sum, breaks=61, xlab="Total number of steps per day [-]", main="Histogram of imputed data")
 ```
 
+![](PA1_template_files/figure-html/hist imputed-1.png)<!-- -->
+
 Calculate the mean and median:
 
-```{r mean median of imputed data, echo=TRUE}
+
+```r
 mean(summedimp$sum, na.rm = TRUE)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(summedimp$sum, na.rm = TRUE)
+```
+
+```
+## [1] 10766.19
 ```
 Thus, with imputed data the median is the same as the mean in this case.
 
@@ -86,18 +172,27 @@ Thus, with imputed data the median is the same as the mean in this case.
 
 Create the factor variable type:
 
-```{r weekdays vs weekends, echo=TRUE}
+
+```r
 dfimp$type <- factor(weekdays(dfimp$date) %in% c("Samstag", "Sonntag"), labels = c("weekday", "weekend"))
 ```
 
 Calculate average for the intervals:
-```{r average with type, echo=TRUE}
+
+```r
 dfimp %>% na.omit() %>% group_by(interval, type) %>% summarize(mean = mean(steps)) -> averageimp
+```
+
+```
+## `summarise()` regrouping output by 'interval' (override with `.groups` argument)
 ```
 
 Create a panel plot:
 
-```{r panel plot, echo=TRUE}
+
+```r
 library(ggplot2)
 ggplot(averageimp, aes(interval, mean)) + geom_line() + facet_grid(type ~ .) + ylab("Number steps") + xlab("Interval")
 ```
+
+![](PA1_template_files/figure-html/panel plot-1.png)<!-- -->
